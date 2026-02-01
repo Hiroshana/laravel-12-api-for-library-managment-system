@@ -21,14 +21,14 @@ class BookController extends Controller
         $query = Book::with('author');
 
         // Apply filters if present
-       if($request->has('search')){
-            $search = $request->search;
+       if($request->has('q')){
+            $q = $request->q;
 
-            $query->where(function($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('isbn', 'like', "%{$search}%")
-                  ->orWhereHas('author', function($q2) use ($search) {
-                      $q2->where('name', 'like', "%{$search}%");
+            $query->where(function($q1) use ($q) {
+                $q1->where('title', 'like', "%{$q}%")
+                  ->orWhere('isbn', 'like', "%{$q}%")
+                  ->orWhereHas('author', function($q2) use ($q) {
+                      $q2->where('name', 'like', "%{$q}%");
                   });
             });
         }
@@ -36,7 +36,7 @@ class BookController extends Controller
         if($request->has('genre')){
             $query->where('genre', $request->genre);
         }
-        
+
         $books = $query->paginate(10);
         return BookResource::collection($books);
     }
