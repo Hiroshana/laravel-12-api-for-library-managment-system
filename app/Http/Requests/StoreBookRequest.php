@@ -24,7 +24,9 @@ class StoreBookRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            'isbn' =>['required','string',
+            'isbn' =>[
+                'required',
+                'string',
                 Rule::unique('books','isbn')->ignore($this->id, 'id')
             ],
             'description'   => 'nullable|string',
